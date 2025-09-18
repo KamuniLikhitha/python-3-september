@@ -1,0 +1,30 @@
+class TaskManager:
+    def __init__(self, tasks: List[List[int]]):
+        self.task_user={}
+        self.task_prio={}
+        self.heap=[]
+        for userId, taskId, priority in tasks:
+            self.task_user[taskId]=userId
+            self.task_prio[taskId]=priority
+            heapq.heappush(self.heap,(-priority, -taskId, taskId))
+    def add(self, userId: int, taskId: int, priority: int) -> None:
+        self.task_user[taskId]=userId
+        self.task_prio[taskId]=priority
+        heapq.heappush(self.heap,(-priority, -taskId, taskId))
+    def edit(self, taskId: int, newPriority: int) -> None:
+        self.task_prio[taskId]=newPriority
+        heapq.heappush(self.heap,(-newPriority, -taskId, taskId))
+    def rmv(self, taskId: int) -> None:
+        if taskId in self.task_user:
+            del self.task_user[taskId]
+            del self.task_prio[taskId]
+    def execTop(self) -> int:
+        while self.heap:
+            neg_prio, neg_tId, tId=heapq.heappop(self.heap)
+            prio=-neg_prio
+            if tId in self.task_prio and self.task_prio[tId]==prio:
+                userId=self.task_user[tId]
+                del self.task_prio[tId]
+                del self.task_user[tId]
+                return userId
+        return -1
